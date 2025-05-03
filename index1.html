@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to My Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+            perspective: 1000px;
+        }
+
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .loader.fade-out {
+            opacity: 0;
+            transform: scale(1.5);
+            pointer-events: none;
+        }
+
+        .loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .loading-text {
+            color: #fff;
+            font-size: 24px;
+            letter-spacing: 8px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .loading-text::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: #000;
+            border-left: 2px solid #4f46e5;
+            animation: typing 3s steps(10) infinite;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .loading-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #4f46e5, #ec4899);
+            animation: fill 3s ease-in-out infinite;
+        }
+
+        .hero {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .hero-content {
+            text-align: center;
+            padding: 20px;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .hero-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .glitch-logo {
+            width: 200px;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #fff;
+            overflow: hidden;
+            box-shadow: 
+                0 0 20px rgba(79, 70, 229, 0.5),
+                0 0 60px rgba(79, 70, 229, 0.3);
+        }
+
+        .glitch-logo::before,
+        .glitch-logo::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(236, 72, 153, 0.5);
+            animation: glitch 1s infinite;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .glitch-logo::after {
+            background: rgba(79, 70, 229, 0.5);
+            animation: glitch 1.5s infinite;
+            animation-delay: 0.5s;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            display: inline-block;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .hero-title span {
+            animation: flip 6s infinite;
+            display: inline-block;
+        }
+
+        .hero-title span:nth-child(1) { animation-delay: 0.2s; }
+        .hero-title span:nth-child(2) { animation-delay: 0.4s; }
+        .hero-title span:nth-child(3) { animation-delay: 0.6s; }
+        .hero-title span:nth-child(4) { animation-delay: 0.8s; }
+        .hero-title span:nth-child(5) { animation-delay: 1s; }
+        .hero-title span:nth-child(6) { animation-delay: 1.2s; }
+        .hero-title span:nth-child(7) { animation-delay: 1.4s; }
+        .hero-title span:nth-child(8) { animation-delay: 1.6s; }
+        .hero-title span:nth-child(9) { animation-delay: 1.8s; }
+        .hero-title span:nth-child(10) { animation-delay: 2s; }
+
+        .hero-text {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .enter-button {
+            position: relative;
+            padding: 20px 60px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .enter-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #4f46e5, #ec4899);
+            opacity: 1;
+            transition: all 0.3s ease;
+            z-index: -1;
+            transform: skewX(-15deg);
+            box-shadow: 
+                0 0 20px rgba(79, 70, 229, 0.5),
+                0 0 60px rgba(79, 70, 229, 0.3);
+        }
+
+        .enter-button:hover::before {
+            transform: skewX(-15deg) scale(1.1);
+            box-shadow: 
+                0 0 30px rgba(79, 70, 229, 0.8),
+                0 0 80px rgba(79, 70, 229, 0.5);
+        }
+
+        .enter-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -100%;
+            width: 300%;
+            height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(30deg);
+            transition: all 0.5s ease;
+        }
+
+        .enter-button:hover::after {
+            left: 100%;
+            transition: all 0.7s ease;
+        }
+
+        .cube-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .cube {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
+            transform-style: preserve-3d;
+            animation: cubeFloat 15s linear infinite;
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.3), rgba(236, 72, 153, 0.1));
+            opacity: 0.3;
+            transform: translate(-50%, -50%);
+            filter: blur(20px);
+            z-index: 0;
+            animation: pulse 8s infinite alternate;
+        }
+
+        .circle-1 {
+            top: 20%;
+            left: 25%;
+            width: 400px;
+            height: 400px;
+            animation-delay: 0s;
+        }
+
+        .circle-2 {
+            top: 70%;
+            left: 75%;
+            width: 300px;
+            height: 300px;
+            animation-delay: 2s;
+        }
+
+        .circle-3 {
+            top: 40%;
+            left: 80%;
+            width: 250px;
+            height: 250px;
+            animation-delay: 4s;
+        }
+
+        .mouse-follower {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4f46e5;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease;
+            z-index: 9999;
+            opacity: 0.7;
+            box-shadow: 0 0 20px 5px rgba(79, 70, 229, 0.5);
+        }
+
+        @keyframes typing {
+            0%, 100% { width: 0; }
+            50% { width: 100%; }
+        }
+
+        @keyframes fill {
+            0% { width: 0; }
+            50% { width: 100%; }
+            100% { width: 0; }
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes flip {
+            0%, 80% { transform: rotateY(0); }
+            90% { transform: rotateY(180deg); }
+            100% { transform: rotateY(360deg); }
+        }
+
+        @keyframes cubeFloat {
+            0% { 
+                transform: translateY(100vh) rotateX(0deg) rotateY(0deg) rotateZ(0deg); 
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(-100vh) rotateX(360deg) rotateY(360deg) rotateZ(360deg); 
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.1; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-text {
+                font-size: 1rem;
+            }
+
+            .glitch-logo {
+                width: 150px;
+                height: 150px;
+            }
+
+            .enter-button {
+                padding: 15px 40px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .glitch-logo {
+                width: 120px;
+                height: 120px;
+            }
+
+            .enter-button {
+                padding: 12px 30px;
+            }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Mouse Follower -->
+    <div class="mouse-follower" id="mouseFollower"></div>
+
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loading-text">LOADING...</div>
+            <div class="loading-bar">
+                <div class="loading-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Elements -->
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+    <div class="cube-container" id="cubeContainer"></div>
+
+    <!-- Main Content -->
+    <section class="hero">
+        <div class="hero-content" id="heroContent">
+            <div class="glitch-logo" id="logo">
+                <img src="LOGOKOPMA.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; position: relative; z-index: 5;">
+            </div>
+            <h1 class="hero-title">
+                <span>W</span>
+                <span>E</span>
+                <span>L</span>
+                <span>C</span>
+                <span>O</span>
+                <span>M</span>
+                <span>E</span>
+            </h1>
+            <p class="hero-text">Terimakasih telah mengunjungi Website KOPMA UNRI. Rasakan pengalaman baru dengan website KOPMA UNRI ini yeahhhh😎</p>
+            <button class="enter-button" id="enterButton">MASUK</button>
+        </div>
+    </section>
+
+    <script>
+        // Mouse follower effect
+        document.addEventListener('mousemove', (e) => {
+            const mouseFollower = document.getElementById('mouseFollower');
+            mouseFollower.style.left = e.clientX + 'px';
+            mouseFollower.style.top = e.clientY + 'px';
+        });
+
+        // Mouse hover effect on button
+        const enterButton = document.getElementById('enterButton');
+        enterButton.addEventListener('mouseenter', () => {
+            const mouseFollower = document.getElementById('mouseFollower');
+            mouseFollower.style.width = '50px';
+            mouseFollower.style.height = '50px';
+            mouseFollower.style.background = '#ec4899';
+        });
+
+        enterButton.addEventListener('mouseleave', () => {
+            const mouseFollower = document.getElementById('mouseFollower');
+            mouseFollower.style.width = '20px';
+            mouseFollower.style.height = '20px';
+            mouseFollower.style.background = '#4f46e5';
+        });
+
+        // Generate floating cubes
+        function createCubes() {
+            const cubeContainer = document.getElementById('cubeContainer');
+            const cubeCount = 15;
+            
+            for (let i = 0; i < cubeCount; i++) {
+                const cube = document.createElement('div');
+                cube.classList.add('cube');
+                
+                // Random size
+                const size = Math.random() * 60 + 20;
+                cube.style.width = `${size}px`;
+                cube.style.height = `${size}px`;
+                
+                // Random position
+                cube.style.left = `${Math.random() * 100}%`;
+                
+                // Random duration and delay
+                const duration = Math.random() * 30 + 15;
+                cube.style.animationDuration = `${duration}s`;
+                cube.style.animationDelay = `${Math.random() * 5}s`;
+                
+                // Random rotation
+                const rotation = Math.random() * 360;
+                cube.style.transform = `translateY(100vh) rotateX(${rotation}deg) rotateY(${rotation}deg)`;
+                
+                // Random color
+                const hue = Math.random() * 60 + 210; // Blue to Purple range
+                cube.style.borderColor = `hsla(${hue}, 70%, 60%, 0.2)`;
+                cube.style.boxShadow = `0 0 20px hsla(${hue}, 70%, 60%, 0.3)`;
+                
+                cubeContainer.appendChild(cube);
+            }
+        }
+
+        // Loading sequence
+        window.addEventListener('load', () => {
+            // Create floating elements
+            createCubes();
+            
+            // Hide loader after 3 seconds
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.classList.add('fade-out');
+                
+                // Show main content
+                setTimeout(() => {
+                    const heroContent = document.getElementById('heroContent');
+                    heroContent.classList.add('visible');
+                }, 500);
+            }, 3000);
+        });
+
+        // Button click to main website
+        document.getElementById('enterButton').addEventListener('click', function() {
+            // Animation effect before redirect
+            document.body.style.transition = 'transform 1s ease, opacity 1s ease';
+            document.body.style.transform = 'scale(1.5)';
+            document.body.style.opacity = '0';
+            
+            // Redirect to main website after animation
+            setTimeout(() => {
+                // Replace with your actual main website URL
+                window.location.href = "https://kopmaunri.github.io/kopma-unri/";
+            }, 1000);
+        });
+
+        // Add 3D tilt effect to logo
+        const logo = document.getElementById('logo');
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            logo.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+    </script>
+</body>
+</html>
